@@ -1,15 +1,19 @@
-# Ariq Anwar AI V4
-Versi 4 untuk GitHub Pages/Android.
+# Ariq Anwar AI V5
+
+Versi 5 untuk GitHub Pages/Android.
 
 Fitur:
-- UI futuristik baru
-- Voice input Bahasa Indonesia
-- Text-to-speech Bahasa Indonesia
-- Chat sederhana
-- Jam dan tanggal
-- Google Search
-- Tombol/perintah YouTube, TikTok, Minecraft, Blockman GO
-- PWA install
-- Service worker dengan cache V4 untuk membantu mengganti cache V2/V3
+- Mode dengar terus selama halaman/PWA sedang terbuka.
+- Bahasa Indonesia + suara.
+- “Buka aplikasi favorit” -> Blockman GO.
+- YouTube, TikTok, Minecraft, Blockman GO, WhatsApp, Chrome, Play Store, Setelan.
+- Pencarian Google.
+- Jam dan tanggal.
+- Cache V5 agar perubahan lebih mudah tampil.
 
-Upload semua file ke branch `main`.
+Batasan penting Android:
+- Website/PWA biasa tidak boleh menyalakan mikrofon terus-menerus ketika aplikasi benar-benar tertutup.
+- Website/PWA biasa tidak memiliki izin untuk mematikan HP.
+- Membuka aplikasi apa pun membutuhkan deep-link/package yang sesuai; aplikasi yang belum dikenali akan dicari di Google.
+
+Jika ingin benar-benar seperti asisten sistem yang aktif di latar belakang, bisa mendengar wake word saat aplikasi tertutup, dan punya kontrol perangkat, langkah berikutnya adalah membuat versi Android native (APK), bukan hanya GitHub Pages.
