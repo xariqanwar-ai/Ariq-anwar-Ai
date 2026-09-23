@@ -1,0 +1,10 @@
+{
+  "name":"Ariq Anwar",
+  "short_name":"Ariq Anwar",
+  "start_url":".",
+  "display":"standalone",
+  "background_color":"#02070b",
+  "theme_color":"#02070b",
+  "description":"Ariq Anwar AI Assistant",
+  "icons":[]
+}
