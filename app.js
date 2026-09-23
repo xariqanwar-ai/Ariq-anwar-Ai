@@ -53,7 +53,9 @@
   }
 
   function openUrl(url) {
-    window.open(url, "_blank", "noopener,noreferrer");
+    // Gunakan navigasi langsung, bukan window.open/setTimeout, agar tidak
+    // diblokir popup blocker saat perintah berasal dari Speech Recognition.
+    window.location.href = url;
   }
 
   function handleCommand(raw) {
@@ -73,12 +75,15 @@
       reply(`Sekarang pukul ${nowTime()}.`);
     } else if (text.includes("tanggal") || text.includes("hari ini")) {
       reply(`Hari ini ${today()}.`);
-    } else if (text.includes("buka youtube") || text === "youtube") {
-      reply("Membuka YouTube.");
-      setTimeout(() => openUrl("https://www.youtube.com/"), 350);
-    } else if (text.includes("buka google") || text === "google") {
-      reply("Membuka Google.");
-      setTimeout(() => openUrl("https://www.google.com/"), 350);
+    } else if (text.includes("buka youtube") || text.includes("membuka youtube") || text === "youtube") {
+      reply("Baik, saya membuka YouTube.", true);
+      setTimeout(() => openUrl("https://www.youtube.com/"), 700);
+    } else if (text.includes("buka google") || text.includes("membuka google") || text === "google") {
+      reply("Baik, saya membuka Google.", true);
+      setTimeout(() => openUrl("https://www.google.com/"), 700);
+    } else if (text.startsWith("buka youtube") || text.startsWith("membuka youtube")) {
+      reply("Baik, saya membuka YouTube.", true);
+      setTimeout(() => openUrl("https://www.youtube.com/"), 700);
     } else if (text.includes("cari ")) {
       const q = raw.substring(raw.toLowerCase().indexOf("cari ") + 5).trim();
       if (q) {
