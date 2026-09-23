@@ -1,10 +1,1 @@
-{
-  "name": "Ariq Anwar AI",
-  "short_name": "Ariq Anwar",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#03070c",
-  "theme_color": "#050b12",
-  "description": "Ariq Anwar personal AI assistant",
-  "icons": []
-}
+{"name":"Ariq Anwar V3","short_name":"Ariq V3","start_url":"./","scope":"./","display":"standalone","orientation":"portrait","theme_color":"#07111f","background_color":"#050914","lang":"id-ID","icons":[{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
