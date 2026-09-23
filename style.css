@@ -1,1 +1,46 @@
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:system-ui,Arial,sans-serif;background:#02070b;color:#e9fcff}body{overflow-x:hidden}.stars{position:fixed;inset:0;background-image:radial-gradient(#00e5ff55 1px,transparent 1px);background-size:34px 34px;opacity:.22;animation:move 18s linear infinite}@keyframes move{to{background-position:34px 34px}}main{position:relative;z-index:1;min-height:100dvh;max-width:600px;margin:auto;padding:24px 18px 30px;display:flex;flex-direction:column}header{display:flex;justify-content:space-between;align-items:start}h1{margin:0;color:#00e5ff;font-size:27px;letter-spacing:5px;text-shadow:0 0 16px #00e5ff66}#status{margin:6px 0 0;color:#00ff9d;font-size:12px;letter-spacing:1px}.small{background:#071b22;border:1px solid #00e5ff88;color:#00e5ff;border-radius:10px;padding:9px 12px}.hidden{display:none}.core{height:340px;position:relative;display:grid;place-items:center}.ring{position:absolute;border:1px solid #00e5ff88;border-radius:50%;box-shadow:0 0 30px #00e5ff22,inset 0 0 25px #00e5ff16}.r1{width:230px;height:230px;animation:spin 9s linear infinite}.r2{width:180px;height:180px;border-style:dashed;animation:spin 6s linear infinite reverse}.r3{width:125px;height:125px;animation:pulse 2s ease-in-out infinite}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{transform:scale(1.08);box-shadow:0 0 45px #00e5ff55}}.core-dot{width:28px;height:28px;border-radius:50%;background:#00e5ff;box-shadow:0 0 15px #00e5ff,0 0 55px #00e5ff}.scan{position:absolute;width:260px;height:2px;background:#00ff9d88;box-shadow:0 0 14px #00ff9d;animation:scan 3s ease-in-out infinite}@keyframes scan{0%,100%{transform:translateY(-115px)}50%{transform:translateY(115px)}}.panel{background:#07141bcc;border:1px solid #087a89;border-radius:18px;padding:15px;backdrop-filter:blur(8px);min-height:125px}#output{font-size:17px;line-height:1.5}#transcript{margin-top:12px;color:#80dbe8;font-size:13px;border-top:1px solid #12444c;padding-top:10px}.panel b{color:#00e5ff}#mic{width:92px;height:92px;margin:20px auto 8px;border-radius:50%;border:2px solid #00e5ff;background:#06252c;color:#00e5ff;font-size:39px;box-shadow:0 0 25px #00e5ff33;transition:.2s}#mic.listening{background:#073d35;border-color:#00ff9d;box-shadow:0 0 40px #00ff9d66;transform:scale(1.06)}.hint{text-align:center;color:#6699a2;font-size:12px}.commands{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}.commands button{background:#07141b;border:1px solid #17616b;color:#9debf3;border-radius:12px;padding:10px 13px}button{font:inherit}button:active{transform:scale(.96)}@media(max-height:700px){.core{height:250px}.r1{width:180px;height:180px}.r2{width:140px;height:140px}.r3{width:95px;height:95px}.scan{width:210px}}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#03070c;color:#dff8ff;font-family:Arial,sans-serif}
+body{min-height:100vh;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:
+radial-gradient(circle at 50% 28%,rgba(0,190,255,.12),transparent 28%),
+linear-gradient(rgba(0,180,255,.025) 1px,transparent 1px),
+linear-gradient(90deg,rgba(0,180,255,.025) 1px,transparent 1px);
+background-size:auto,28px 28px,28px 28px}
+.app{width:min(680px,100%);margin:auto;padding:18px 16px 28px;min-height:100vh}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:8px 2px}
+.brand{font-size:25px;font-weight:800;letter-spacing:4px;text-shadow:0 0 16px #00bfff}
+.subtitle{font-size:10px;letter-spacing:3px;opacity:.55;margin-top:4px}
+.dot{width:11px;height:11px;border-radius:50%;background:#39ff9a;box-shadow:0 0 16px #39ff9a}
+.dot.busy{background:#ffd24a;box-shadow:0 0 16px #ffd24a}
+.dot.error{background:#ff5268;box-shadow:0 0 16px #ff5268}
+
+.core-wrap{height:260px;display:grid;place-items:center;position:relative}
+.ring,.core{position:absolute;border-radius:50%}
+.ring{border:1px solid rgba(0,210,255,.55);box-shadow:0 0 25px rgba(0,180,255,.13)}
+.ring1{width:150px;height:150px;animation:spin 7s linear infinite}
+.ring2{width:190px;height:190px;border-style:dashed;animation:spin 11s linear reverse infinite}
+.ring3{width:230px;height:230px;border-color:rgba(0,210,255,.18);animation:pulse 2.2s ease-in-out infinite}
+.core{width:112px;height:112px;background:radial-gradient(circle,#7ef5ff 0,#00a9e8 20%,#053047 57%,#02070c 72%);
+box-shadow:0 0 28px #00bfff,0 0 75px rgba(0,190,255,.45);display:grid;place-items:center}
+.core-inner{font-weight:900;letter-spacing:3px;color:#eaffff;text-shadow:0 0 12px white}
+.listening .core{animation:listen .7s ease-in-out infinite alternate}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{transform:scale(1.07);opacity:.55}}
+@keyframes listen{to{transform:scale(1.12);box-shadow:0 0 45px #00bfff,0 0 110px rgba(0,190,255,.6)}}
+
+.status{text-align:center;font-weight:800;letter-spacing:3px;font-size:13px;color:#4fffb1}
+.heard{text-align:center;min-height:24px;margin:9px 0 12px;color:#a9d7e2;font-size:14px}
+.chat{border:1px solid rgba(0,200,255,.18);background:rgba(4,14,23,.72);border-radius:16px;padding:12px;min-height:86px;max-height:190px;overflow:auto}
+.msg{padding:9px 11px;border-radius:12px;margin:6px 0;line-height:1.4;font-size:14px}
+.msg.ai{background:rgba(0,170,220,.09);border-left:2px solid #00bfff}
+.msg.user{background:rgba(255,255,255,.06);border-right:2px solid #7ef5ff;text-align:right}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.quick button{border:1px solid rgba(0,200,255,.3);background:rgba(0,140,190,.08);color:#dff8ff;padding:10px;border-radius:12px;font-size:13px}
+.quick button:active{transform:scale(.98)}
+.mic{display:block;margin:16px auto 8px;width:86px;height:86px;border-radius:50%;border:1px solid #3ee8ff;background:radial-gradient(circle,#087da2,#03111b 65%);
+color:white;box-shadow:0 0 20px rgba(0,200,255,.35);font-size:30px}
+.mic:active{transform:scale(.96)}
+.hint{text-align:center;font-size:11px;opacity:.5}
+.footer{text-align:center;font-size:10px;opacity:.45;margin-top:15px}
+
+@media(max-width:390px){.core-wrap{height:225px}.ring3{width:200px;height:200px}.ring2{width:165px;height:165px}.ring1{width:135px;height:135px}.core{width:100px;height:100px}.brand{font-size:21px}}
