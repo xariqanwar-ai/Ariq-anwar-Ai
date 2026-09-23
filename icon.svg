@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="110" fill="#050914"/><circle cx="256" cy="256" r="190" fill="none" stroke="#20e7ff" stroke-width="28"/><circle cx="256" cy="256" r="150" fill="#081524"/><text x="256" y="294" text-anchor="middle" font-family="Arial" font-size="105" font-weight="900" fill="white">AA</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs><radialGradient id="b"><stop stop-color="#172c5b"/><stop offset="1" stop-color="#030611"/></radialGradient><linearGradient id="g" x1="0" x2="1"><stop stop-color="#18eaff"/><stop offset="1" stop-color="#9b5cff"/></linearGradient></defs>
+<rect width="512" height="512" rx="116" fill="#02050f"/>
+<circle cx="256" cy="256" r="184" fill="url(#b)" stroke="url(#g)" stroke-width="18"/>
+<path d="M155 350 222 160h68l67 190h-54l-13-42h-69l-14 42zm81-86h42l-21-68z" fill="white"/>
+<circle cx="256" cy="256" r="213" fill="none" stroke="#18eaff" stroke-opacity=".18" stroke-width="4"/>
+<text x="256" y="405" text-anchor="middle" fill="#18eaff" font-family="Arial" font-size="28" font-weight="bold" letter-spacing="8">ARIQ AI</text>
+</svg>

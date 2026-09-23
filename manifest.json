@@ -1,1 +1,11 @@
-{"name":"Ariq Anwar V4 Mic Fixed V3","short_name":"Ariq V3","start_url":"./","scope":"./","display":"standalone","orientation":"portrait","theme_color":"#07111f","background_color":"#050914","lang":"id-ID","icons":[{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
+{
+  "name":"Ariq Anwar AI V4",
+  "short_name":"Ariq Anwar",
+  "start_url":"./?v=4",
+  "scope":"./",
+  "display":"standalone",
+  "background_color":"#030611",
+  "theme_color":"#050816",
+  "description":"Ariq Anwar AI Assistant V4",
+  "icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}

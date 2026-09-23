@@ -1,216 +1,75 @@
-/* ARIQ ANWAR V4 TRUE MIC - 2026
-   Robust Indonesian speech recognition for Chrome Android.
-*/
-const $ = (s) => document.querySelector(s);
-const chat = $("#chat");
-const input = $("#input");
-const micBtn = $("#micBtn") || document.querySelector("[data-mic]") || document.querySelector("button[aria-label*='mic' i]");
-const statusEl = $("#status") || $("#state") || document.querySelector(".status");
+const $=s=>document.querySelector(s);
+const chat=$("#chat"), input=$("#input"), micBtn=$("#micBtn"), listenState=$("#listenState");
+let recognition=null, deferredPrompt=null;
 
-function msg(text, user=false){
-  if(!chat) return;
+function addMsg(text,user=false){
   const d=document.createElement("div");
-  d.className="msg "+(user?"user":"assistant");
-  d.innerHTML = user
-    ? `<strong>Kamu</strong><p>${escapeHtml(text)}</p>`
-    : `<strong>ARIQ</strong><p>${escapeHtml(text)}</p>`;
-  chat.appendChild(d);
-  chat.scrollTop=chat.scrollHeight;
+  d.className="msg "+(user?"user":"ai");
+  d.innerHTML=`<strong>${user?"KAMU":"ARIQ ANWAR"}</strong>${escapeHtml(text)}`;
+  chat.appendChild(d); chat.scrollTop=chat.scrollHeight;
 }
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-}
-function setStatus(t){
-  if(statusEl) statusEl.textContent=t;
-  document.body.classList.toggle("listening", /MENDENGARKAN/i.test(t));
-}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
 function speak(text){
-  try{
-    speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text);
-    u.lang="id-ID"; u.rate=.95; u.pitch=1;
-    speechSynthesis.speak(u);
-  }catch(e){}
+  if(!("speechSynthesis" in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text); u.lang="id-ID"; u.rate=.96; u.pitch=1;
+  speechSynthesis.speak(u);
 }
-
-function reply(text){
-  const t=text.toLowerCase().trim();
-  if(/^(halo|hai|hi|hello)\b/.test(t))
-    return "Halo! Saya Ariq Anwar. Saya siap membantu.";
-  if(t.includes("siapa kamu"))
-    return "Saya Ariq Anwar, asisten AI pribadi.";
-  if(t.includes("dibuat oleh siapa") || t.includes("siapa yang membuat") || t.includes("kamu dibuat"))
-    return "Saya dibuat oleh Ariq Anwar.";
-  if(t.includes("jam berapa") || t==="jam")
-    return "Sekarang pukul "+new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
-  if(t.includes("tanggal berapa") || t==="tanggal")
-    return "Hari ini "+new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-  if(t.includes("buka youtube") || t.includes("youtube")){
-    openApp("youtube");
-    return "Membuka YouTube.";
-  }
-  if(t.includes("buka tiktok") || t.includes("tiktok")){
-    openApp("tiktok");
-    return "Membuka TikTok.";
-  }
-  if(t.includes("buka minecraft") || t.includes("minecraft")){
-    openApp("minecraft");
-    return "Membuka Minecraft.";
-  }
-  if(t.includes("buka blockman") || t.includes("blockman go") || t.includes("blockman")){
-    openApp("blockman");
-    return "Membuka Blockman GO.";
-  }
-  if(t.startsWith("cari ") || t.startsWith("google ")){
-    const q=t.replace(/^cari\s+|^google\s+/,"").trim();
-    if(q) location.href="https://www.google.com/search?q="+encodeURIComponent(q);
-    return "Saya mencari "+q+" di Google.";
-  }
-  if(t.includes("bisa apa") || t.includes("kamu bisa apa"))
-    return "Saya bisa menerima perintah suara, menjawab pertanyaan dasar, memberi waktu dan tanggal, membuka aplikasi, dan melakukan pencarian Google.";
-  return "Saya mendengar: "+text+". Coba perintah seperti buka YouTube, jam, tanggal, atau cari sesuatu.";
-}
+function answer(text){addMsg(text); speak(text);}
 
 function openApp(name){
-  const urls={
-    youtube:"intent://www.youtube.com/#Intent;scheme=https;package=com.google.android.youtube;end",
-    minecraft:"intent://launch/#Intent;scheme=minecraft;package=com.mojang.minecraftpe;end",
-    tiktok:"intent://#Intent;scheme=snssdk1180;package=com.zhiliaoapp.musically;end",
-    blockman:"intent://#Intent;scheme=blockmango;package=com.sandboxol.blockymods;end"
+  const data={
+    youtube:["intent://www.youtube.com/#Intent;scheme=https;package=com.google.android.youtube;end","https://www.youtube.com/"],
+    tiktok:["intent://#Intent;scheme=snssdk1180;package=com.zhiliaoapp.musically;end","https://www.tiktok.com/"],
+    minecraft:["intent://launch/#Intent;scheme=minecraft;package=com.mojang.minecraftpe;end","https://play.google.com/store/apps/details?id=com.mojang.minecraftpe"],
+    blockman:["intent://#Intent;scheme=blockmango;package=com.sandboxol.blockymods;end","https://play.google.com/store/apps/details?id=com.sandboxol.blockymods"]
   };
-  const fallback={
-    youtube:"https://www.youtube.com/",
-    minecraft:"https://play.google.com/store/apps/details?id=com.mojang.minecraftpe",
-    tiktok:"https://www.tiktok.com/",
-    blockman:"https://play.google.com/store/apps/details?id=com.sandboxol.blockymods"
-  };
-  if(!urls[name]) return;
-  location.href=urls[name];
-  setTimeout(()=>{ location.href=fallback[name]; },2200);
+  const x=data[name]; if(!x)return;
+  answer("Baik, saya mencoba membuka "+name+".");
+  setTimeout(()=>{location.href=x[0];setTimeout(()=>{location.href=x[1]},1800)},450);
 }
 
-function handleText(text){
-  if(!text) return;
-  msg(text,true);
-  const answer=reply(text);
-  msg(answer,false);
-  speak(answer);
-}
-
-let recognition=null;
-let listening=false;
-
-function supported(){
-  return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-}
-function makeRecognition(){
-  const SR=window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SR) return null;
-  const r=new SR();
-  r.lang="id-ID";
-  r.continuous=false;
-  r.interimResults=true;
-  r.maxAlternatives=1;
-  r.onstart=()=>{
-    listening=true;
-    setStatus("MENDENGARKAN…");
-    if(micBtn) micBtn.classList.add("active");
-  };
-  r.onresult=(e)=>{
-    let finalText="";
-    let interim="";
-    for(let i=e.resultIndex;i<e.results.length;i++){
-      const s=e.results[i][0].transcript;
-      if(e.results[i].isFinal) finalText+=s;
-      else interim+=s;
-    }
-    if(statusEl && interim) statusEl.textContent="MENDENGARKAN: "+interim;
-    if(finalText) handleText(finalText.trim());
-  };
-  r.onerror=(e)=>{
-    listening=false;
-    if(micBtn) micBtn.classList.remove("active");
-    const map={
-      "not-allowed":"Izin mikrofon ditolak. Izinkan Mikrofon untuk Chrome.",
-      "service-not-allowed":"Layanan suara diblokir oleh browser.",
-      "audio-capture":"Mikrofon tidak ditemukan atau sedang dipakai aplikasi lain.",
-      "no-speech":"Saya tidak mendengar suara. Coba tekan mic lalu bicara.",
-      "network":"Pengenalan suara memerlukan koneksi internet."
-    };
-    setStatus("SIAP");
-    msg(map[e.error] || ("Mic error: "+e.error),false);
-  };
-  r.onend=()=>{
-    listening=false;
-    if(micBtn) micBtn.classList.remove("active");
-    if(statusEl && !/error/i.test(statusEl.textContent||"")) setStatus("SIAP");
-  };
-  return r;
-}
-
-async function startMic(){
-  if(!supported()){
-    setStatus("MIC TIDAK DIDUKUNG");
-    msg("Chrome pada perangkat ini tidak menyediakan Speech Recognition. Gunakan Chrome Android versi terbaru.",false);
-    return;
+function process(text){
+  const t=text.toLowerCase().trim();
+  addMsg(text,true);
+  if(!t)return;
+  if(/^(halo|hai|hi|hello)\b/.test(t)){answer("Halo! Saya Ariq Anwar, asisten AI versi V4. Ada yang bisa saya bantu?");return}
+  if(t.includes("siapa kamu")){answer("Saya Ariq Anwar, asisten digital berbasis HTML dan JavaScript.");return}
+  if(t.includes("dibuat oleh siapa")||t.includes("siapa yang membuat")||t.includes("kamu dibuat")){answer("Saya dibuat oleh Ariq Anwar.");return}
+  if(t.includes("bisa apa")||t.includes("fitur kamu")){answer("Saya bisa menjawab perintah dasar, berbicara, mendengar suara, menunjukkan waktu dan tanggal, mencari di Google, serta mencoba membuka YouTube, TikTok, Minecraft, dan Blockman GO.");return}
+  if(t.includes("jam berapa")||t.includes("sekarang jam")){answer("Sekarang pukul "+new Intl.DateTimeFormat("id-ID",{hour:"2-digit",minute:"2-digit"}).format(new Date())+".");return}
+  if(t.includes("tanggal")||t.includes("hari apa")){answer("Hari ini "+new Intl.DateTimeFormat("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(new Date())+".");return}
+  if(t.includes("buka youtube")||t.includes("youtube")){openApp("youtube");return}
+  if(t.includes("buka tiktok")||t.includes("tiktok")){openApp("tiktok");return}
+  if(t.includes("buka minecraft")||t.includes("minecraft")){openApp("minecraft");return}
+  if(t.includes("buka blockman")||t.includes("blockman go")||t.includes("blockman")){openApp("blockman");return}
+  if(t.startsWith("cari ")||t.startsWith("search ")){
+    const q=t.replace(/^(cari|search)\s+/,"").trim();
+    if(q){answer("Saya akan mencari "+q+" di Google.");setTimeout(()=>location.href="https://www.google.com/search?q="+encodeURIComponent(q),500);return}
   }
-  try{
-    // Meminta izin mikrofon secara eksplisit bila tersedia.
-    if(navigator.mediaDevices?.getUserMedia){
-      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-      stream.getTracks().forEach(t=>t.stop());
-    }
-  }catch(e){
-    setStatus("IZIN MIC DITOLAK");
-    msg("Izin mikrofon belum diberikan. Buka izin situs Chrome dan pilih Izinkan.",false);
-    return;
-  }
-
-  if(listening){
-    try{ recognition?.stop(); }catch(e){}
-    return;
-  }
-  recognition=makeRecognition();
-  try{
-    recognition.start();
-  }catch(e){
-    // Chrome dapat melempar InvalidStateError jika sesi sebelumnya belum selesai.
-    setTimeout(()=>{
-      try{
-        recognition=makeRecognition();
-        recognition.start();
-      }catch(err){
-        setStatus("MIC ERROR");
-        msg("Mic gagal dimulai. Muat ulang halaman lalu coba lagi.",false);
-      }
-    },350);
-  }
+  if(t.includes("terima kasih")||t.includes("makasih")){answer("Sama-sama!");return}
+  answer("Saya belum memahami perintah itu. Coba katakan: buka YouTube, jam berapa sekarang, cari di Google, atau siapa kamu.");
 }
 
-if(micBtn) micBtn.addEventListener("click",startMic);
+$("#form").addEventListener("submit",e=>{e.preventDefault();const v=input.value.trim();if(v){input.value="";process(v)}});
 
-document.querySelectorAll("[data-command]").forEach(btn=>{
-  btn.addEventListener("click",()=>handleText(btn.dataset.command));
-});
-document.querySelectorAll("button").forEach(btn=>{
-  const text=(btn.textContent||"").toLowerCase();
-  if(text.includes("youtube")) btn.addEventListener("click",()=>openApp("youtube"));
-  if(text.includes("google")) btn.addEventListener("click",()=>location.href="https://www.google.com/");
-  if(text.includes("jam")) btn.addEventListener("click",()=>handleText("jam"));
-  if(text.includes("tanggal")) btn.addEventListener("click",()=>handleText("tanggal"));
-});
+document.querySelectorAll(".quick button").forEach(b=>b.addEventListener("click",()=>process(b.dataset.cmd)));
 
-if(input){
-  input.addEventListener("keydown",e=>{
-    if(e.key==="Enter"){
-      const v=input.value.trim();
-      input.value="";
-      handleText(v);
-    }
-  });
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SR){
+  recognition=new SR(); recognition.lang="id-ID"; recognition.interimResults=false; recognition.continuous=false;
+  recognition.onstart=()=>{micBtn.classList.add("listening");listenState.textContent="Mendengarkan... silakan bicara";};
+  recognition.onend=()=>{micBtn.classList.remove("listening");listenState.textContent="Tekan mikrofon untuk berbicara";};
+  recognition.onerror=e=>{listenState.textContent="Mikrofon: "+(e.error==="not-allowed"?"izin mikrofon ditolak":"coba lagi");};
+  recognition.onresult=e=>process(e.results[0][0].transcript);
+  micBtn.onclick=()=>{try{recognition.start()}catch(e){}};
+}else{
+  micBtn.onclick=()=>answer("Browser ini belum mendukung pengenalan suara. Gunakan Chrome Android dan izinkan mikrofon.");
 }
 
-window.addEventListener("load",()=>{
-  setStatus("SIAP");
-  if(!supported()) msg("Catatan: Speech Recognition tidak tersedia di browser ini. Gunakan Chrome Android.",false);
-});
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("#installBtn").classList.remove("hidden")});
+$("#installBtn").addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();deferredPrompt=null});
+
+if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js?v=4").catch(()=>{}));
+
+addMsg("Halo! Saya siap membantu. Tekan mikrofon atau ketik perintah.");
